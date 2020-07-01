@@ -1,0 +1,13 @@
+{
+  "iconDefinitions": {
+    "jsd": {
+      "iconPath": "../src/fileIcons/jsd.png"
+    }
+  },
+  "fileNames": {
+    "jsdefender.config.json": "jsd"
+  },
+  "fileExtensions": {
+    "jsdconfig": "jsd"
+  }
+}

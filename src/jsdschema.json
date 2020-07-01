@@ -1,3 +1,357 @@
 {
-    "type": "string"
+  "title": "JSON Schema for JSDefender configuration files",
+  "type": "object",
+  "additionalProperties": false,
+
+  "definitions": {
+    "protectionSettings": {
+      "type": "object",
+      "title": "JSDefender code protection settings",
+      "description": "True disables using the inline protection directives, as if they were omitted from the source code.",
+      "properties": {
+        "booleanLiterals": {
+          "title": "Turns on or off Boolean literal obfuscation",
+          "description": "Replaces the true and false Boolean literal values with equivalent—but less straightforward—expressions.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "object",
+              "properties": {
+                "randomize": {
+                  "title": "Allows randomization",
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "constantArgument": {
+          "title": "Turns on or off constant argument transformation",
+          "description": "replaces integer literals in function arguments with conditional expressions that use special guard conditions declared in the JSDefender Runtime.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "controlFlow": {
+          "title": "Turns on or off control flow obfuscation",
+          "description": "This obfuscation makes the code's control flow more difficult to follow, especially when if statements and loops are nested.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "object",
+              "properties": {
+                "randomize": {
+                  "title": "Allows randomization",
+                  "type": "boolean"
+                },
+                "injectFakeCode": {
+                  "title": "Allows injecting fake code (not implemented yet)",
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "dateLock": {
+          "title": "Turns on or off date lock protection",
+          "description": "This protection technique injects code to the protected source, which tests if the current date is in a particular interval. If so, the code runs normally; otherwise, it breaks right after the date test phase.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "object",
+              "properties": {
+                "startDate": {
+                  "title": "The inclusive start date of the lock period.",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  ]
+                },
+                "endDate": {
+                  "title": "The exclusive end date of the lock period.",
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  ]
+                }
+              },
+              "errorScript": {
+                "title": "Script to execute when invalid date observed",
+                "description": "Leave it empty, or provide a valid JavaScript code snippet.",
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "debuggerRemoval": {
+          "title": "Turns on or off debugger statement removal",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "domainLock": {
+          "title": "Turns on or off domain lock protection",
+          "description": "This protection technique injects code to the protected source, which tests if the code comes from a valid domain. If so, the code runs normally; otherwise, it breaks right after the domain test phase.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "string",
+              "pattern": "^([\\.a-z0-9A-Z-])+(\\s*;\\s*([\\.a-z0-9A-Z-])+)*$"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "domainPattern": {
+                  "title": "Domain name pattern",
+                  "description": "You can set it to a full domain name like 'www.mydomain.net', or a partial domain name like '.mydomain.net' to allow the code run in any subdomain of mydomain.net. Multiple patterns can be separated by semicolons.",
+                  "type": "string",
+                  "pattern": "^([\\.a-z0-9A-Z-])+(\\s*;\\s*([\\.a-z0-9A-Z-])+)*$"
+                },
+                "errorScript": {
+                  "title": "Script to execute when invalid domain observed",
+                  "description": "Leave it empty, or provide a valid JavaScript code snippet.",
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "exprSequence": {
+          "title": "Turns on or off expression sequnce transformation",
+          "description": "This protection technique collects adjacent expression statements in the code and joins them into an expression sequence.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "functionReorder": {
+          "title": "Turns on or off function reordering",
+          "description": "This protection technique collects function declarations in the source code, and then scatters them in their declaring scope.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "object",
+              "properties": {
+                "randomize": {
+                  "title": "Allows randomization",
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "integerLiterals": {
+          "title": "Turns on or off integer literal obfuscation",
+          "description": "This method replaces integer literals with expressions that result in the very same value. Also, you can define a radix (binary, decimal, hexadecimal, octal) to convert any other integer literals.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "object",
+              "properties": {
+                "randomize": {
+                  "title": "Allows randomization",
+                  "type": "boolean"
+                },
+                "radix": {
+                  "type": "string",
+                  "title": "Radix to use when replacing integer literals.",
+                  "description": "Accepted values are: 'binary', 'decimal', 'hexadecimal', and 'octal'.",
+                  "pattern": "^binary|decimal|hexadecimal|octal$"
+                },
+                "lower": {
+                  "title": "The smallest integer literal to obfuscate",
+                  "description": "Accepted values: 0-65535, default: 0.",
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMaximum": 65536
+                },
+                "upper": {
+                  "title": "The highest integer literal to obfuscate",
+                  "description": "Accepted values: 0-65535, default: 8.",
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMaximum": 65536
+                }
+              }
+            }
+          ]
+        },
+        "localDeclaration": {
+          "title": "Turns on or off local declaration renaming",
+          "description": "This technique renames the identifiers of local declarations (such as variables, functions, and classes). You can choose from a number of name mangling methods.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            {
+              "type": "object",
+              "properties": {
+                "nameMangling": {
+                  "title": "Describes the transformation to use when renaming variables.",
+                  "description": "Accepted values: 'sequential', 'hexadecimal', 'base52', and 'base62'. Default: 'base52'.",
+                  "type": "string",
+                  "pattern": "^sequential|hexadecimal|base52|base62$"
+                },
+                "excludeIds": {
+                  "title": "Optional list of identifier strings.",
+                  "description": "The top-level declarations with the specified names are not renamed.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "propertyIndirection": {
+          "title": "Turns on or off property indirection",
+          "description": "Changes direct property access expressions to indirect (indexed, or computed) property expressions.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "propertySparsing": {
+          "title": "Turns on or off property sparsing",
+          "description": "Transforms object literal expression assignments into multiple assignment statements to make them harder to read.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "selfDefending": {
+          "title": "Turns on or off code tampering detection",
+          "description": "Wraps function declarations, function expressions, object and class method declarations into a guarding function. That function observes if its body (thus, the original function-like construct) is tampered.",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "boolean" },
+            { "type": "number" },
+            {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "title": "The number of nested self-defending wrappers.",
+                  "description": "Accepted values: 0-4",
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMaximum": 5
+                },
+                "errorScript": {
+                  "title": "Script to execute when code tampering detected",
+                  "description": "Leave it empty, or provide a valid JavaScript code snippet.",
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "stringLiterals": {
+          "title": "Turns on or off string literal extraction",
+          "description": "Extracts string literals from the code, and puts their encoded forms into constant variables.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "variableGrouping": {
+          "title": "Turns on or off variable grouping transformation",
+          "description": "Separates variable declarations and initializations; it moves the declaration part to the end of the declaration scope.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        }
+      }
+    }
+  },
+
+  "properties": {
+    "sourceDir": {
+      "type": "string",
+      "title": "Input directory",
+      "description": "When specified, input files are relative to this folder within the working directory. If omitted, input files are relative to the working directory."
+    },
+    "outDir": {
+      "type": "string",
+      "title": "Output directory",
+      "description": "Relative to the working directory. JSDefender puts the protected files into this folder with their original name. Default: 'protected'."
+    },
+    "mapFile": {
+      "type": "string",
+      "title": "Map file name",
+      "description": "Specifying this value changes the default map file name (lexical-map.json). Use 'off' to turn off map file generation."
+    },
+    "quietMode": {
+      "type": "boolean",
+      "title": "Turns on or off quiet mode",
+      "description": "When JSDefender runs in quiet mode, it displays only warnings and errors."
+    },
+    "license": {
+      "type": "string",
+      "title": "License key to use",
+      "description": "Specifies the license key to use with JSDefender."
+    },
+    "esTarget": {
+      "type": "string",
+      "title": "ECMAScript version to use when protecting code",
+      "description": "When transforming the code, JSDefender uses the highest ECMAScript version recognized while parsing the input. With this option, you can change the ECMAScript version. Accepted values: 'es5', 'es2015', 'es2016', 'es2017', and 'es2018'",
+      "pattern": "^es5|es2015|es2016|es2017|es2018$"
+    },
+    "randomseed": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 4294967296,
+      "title": "Random seed value to use",
+      "description": "Some protection techniques use randomization, so every run with the same configuration results in different outputs. The value should be a 32-bit integer number that follows the option. If it is not specified or 0, the protection uses a non-deterministic seed value."
+    },
+    "ignoreUnsafeConstructs": {
+      "type": "boolean",
+      "title": "Turns ignoring unsafe construct on or off",
+      "description": "JSDefender checks the source code for unsafe JavaScript constructs that may break the working code. By default, finding any unsafe element will immediately abort the protection with error messages that state the source code location of the issue. If you are sure that none of the potential unsafe elements break your working code, use this option to allow the protection process to carry on."
+    },
+    "disableInline": {
+      "type": "boolean",
+      "title": "Disables or enables inline protection configuration",
+      "description": "True disables using the inline protection directives, as if they were omitted from the source code."
+    },
+    "inputs": {
+      "type": "array",
+      "title": "Represents the input files to protect",
+      "description": "Each element in this array is either a string or an object specifying more details. When an item is a string, the value specifies the location within 'sourceDir'. Instead of a simple string, you can use a descriptor object.",
+      "items": {
+        "anyOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "properties": {
+              "in": { "title": "The name of the input file", "type": "string" },
+              "out": {
+                "title": "The name of the protected file",
+                "type": "string"
+              },
+              "protection": {
+                "title": "The name of the protection set to apply",
+                "description": "Besides the named protection sets, you can use these special names: 'off', 'disable-inline', and 'default'.",
+                "type": "string"
+              },
+              "isModule": { "title": "Is this code loaded as a module?", "type": "boolean" }
+            }
+          }
+        ]
+      }
+    },
+    "settings": {
+      "$ref": "#/definitions/protectionSettings"
+    },
+    "namedSets": {
+      "title": "Named configuration sets",
+      "description": "You can define properties that have the same structure as the 'settings' property. This protection sets can be used in inline configuration directives.",
+      "type": "object",
+      "patternProperties": {
+        "^[A-Za-z_][A-Za-z0-9_]*$": {
+          "$ref": "#/definitions/protectionSettings"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
