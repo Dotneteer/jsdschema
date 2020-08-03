@@ -1,11 +1,13 @@
 {
   "name": "jsdschema",
-  "displayName": "JsdSchema",
-  "description": "PreEmptive JSDefender JSON Schema extension",
-  "version": "0.0.1",
+  "displayName": "JSD VS Code Extensions",
+  "description": "Visual Studio Code extensions form PreEmptive JSDefender",
+  "version": "0.1.2",
   "engines": {
     "vscode": "^1.46.0"
   },
+  "publisher": "dotneteer-preemptive",
+  "icon": "resources/logo.png",
   "categories": [
     "Other"
   ],
@@ -22,16 +24,11 @@
     ],
     "jsonValidation": [
       {
-        "fileMatch": "jsdefender.config.json",
-        "url": "./src/jsdschema.json"
-      }
-    ],
-    "iconThemes": [
-      {
-        "id": "jsdefender-icon-theme",
-        "label": "JSDefender Icon Theme",
-        "path": "./out/jsdefender-icons.json",
-        "_watch": true
+        "fileMatch": [
+          "jsdefender.config.json",
+          "*.jsdconfig"
+        ],
+        "url": "./out/jsdschema.json"
       }
     ]
   },

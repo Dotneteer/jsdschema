@@ -187,7 +187,7 @@
             }
           ]
         },
-        "localDeclaration": {
+        "localDeclarations": {
           "title": "Turns on or off local declaration renaming",
           "description": "This technique renames the identifiers of local declarations (such as variables, functions, and classes). You can choose from a number of name mangling methods.",
           "anyOf": [
@@ -258,6 +258,11 @@
         "variableGrouping": {
           "title": "Turns on or off variable grouping transformation",
           "description": "Separates variable declarations and initializations; it moves the declaration part to the end of the declaration scope.",
+          "anyOf": [{ "type": "null" }, { "type": "boolean" }]
+        },
+        "variableMasking": {
+          "title": "Turns on or off variable masking transformation",
+          "description": "(Not implemented yet.)",
           "anyOf": [{ "type": "null" }, { "type": "boolean" }]
         }
       }
