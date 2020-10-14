@@ -16,12 +16,6 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "jsdschema.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "jsonValidation": [
       {
         "fileMatch": [
